@@ -20,7 +20,10 @@ import (
 	"github.com/28257whoami/demisugar-doctor/internal/doctor"
 )
 
-const version = "v0.1.0"
+// version 必须是 var 不是 const——ldflags -X 只能覆盖 var。
+// 写成 const 会让 GoReleaser 的 -X main.version={{.Version}} 静默失效，
+// 二进制永远报告编译时写死的那个版本号。
+var version = "dev"
 
 func main() {
 	if len(os.Args) < 2 {
