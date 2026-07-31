@@ -1,0 +1,10 @@
+name: ci
+on: [push]
+jobs:
+  # E1 故障：job 存在但 steps 里没有执行声明的稳定入口。
+  # 旧实现用「整个文件包含 entry 字符串」判断，下面这行注释就能骗过它：
+  # ./tools/ci-quality
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "没有真正跑 ci-quality"

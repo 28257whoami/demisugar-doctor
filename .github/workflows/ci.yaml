@@ -1,0 +1,16 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version: '1.24' }
+      # 稳定入口：命令细节封在脚本里，
+      # 避免 workflow 与能力清单各写一份产生漂移
+      - run: ./tools/ci-quality

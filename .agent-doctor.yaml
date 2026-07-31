@@ -1,0 +1,37 @@
+# 本仓自己也接 doctor —— dogfooding。
+#
+# 文档与实现曾同时漂移七处，根因就是 doctor 检查所有仓、
+# 唯独不检查自己。检查器不检查自己，等于没有检查器。
+schema_version: 1
+repo: demisugar-doctor
+rule_source: AGENTS.md
+
+doc_roots:
+  - .
+
+doc_exclude:
+  - path: internal/doctor/testdata/
+    reason: doctor 自身的测试 fixture，故障是故意埋的
+
+capabilities:
+  doctor_source:
+    status: active
+    entry: ./tools/ci-quality
+    ci_job: build
+    files:
+      - cmd/agent-doctor/main.go
+      - internal/doctor/checks.go
+      - internal/doctor/generate.go
+      - internal/doctor/config.go
+      - internal/doctor/report.go
+
+  binary_release:
+    status: active
+    files:
+      - .goreleaser.yaml
+      - .github/workflows/release.yaml
+
+context_profiles:
+  - name: 常驻必读
+    files:
+      - AGENTS.md

@@ -1,0 +1,34 @@
+schema_version: 1
+repo: red-fixture
+rule_source: AGENTS.md
+doc_roots: ["."]
+adapters:
+  - file: CLAUDE.md
+    template: templates/CLAUDE.md.tmpl
+capabilities:
+  docs:
+    status: active
+    generated_blocks:
+      - { file: aiDoc/decisions/README.md, block: decisions-index, kind: decisions-index }
+  overdue:
+    status: planned
+    review_by: 2020-01-01
+    milestone: "早该重新决策的能力"
+    deferrals: []
+  # E1 故障：ci_job 存在但 steps 未执行 entry
+  gate:
+    status: active
+    entry: ./tools/ci-quality
+    ci_job: build
+  # G3 故障：deferral 缺 reason 和 decision_ref
+  bad_deferral:
+    status: planned
+    review_by: 2099-01-01
+    milestone: "推迟记录不完整"
+    deferrals:
+      - from: 2026-01-01
+        to: 2099-01-01
+front_matter:
+  - { dir: aiDoc/decisions, kind: adr }
+  # G5 故障：记忆腐坏（last_verified 2020 年）
+  - { dir: aiDoc/memory/long-term, kind: long_term, stale_after_days: 180 }

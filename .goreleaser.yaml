@@ -1,0 +1,37 @@
+# 四平台静态二进制。CGO_ENABLED=0 保证无运行时依赖，
+# 消费方 CI 不需要装 Go 就能跑 doctor。
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - id: agent-doctor
+    main: ./cmd/agent-doctor
+    binary: agent-doctor
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+# 不打包成 tar.gz：消费方的 bootstrap 直接下载裸二进制并校验 SHA256，
+# 少一层解压就少一处出错的地方。
+archives:
+  - id: raw
+    formats: [binary]
+    name_template: "agent-doctor-{{ .Os }}-{{ .Arch }}"
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+
+changelog:
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^chore:'

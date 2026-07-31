@@ -1,0 +1,19 @@
+schema_version: 1
+repo: green-fixture
+rule_source: AGENTS.md
+doc_roots: ["."]
+adapters:
+  - file: CLAUDE.md
+    template: templates/CLAUDE.md.tmpl
+capabilities:
+  docs:
+    status: active
+    generated_blocks:
+      - { file: aiDoc/decisions/README.md, block: decisions-index, kind: decisions-index }
+  future:
+    status: planned
+    review_by: 2099-12-31
+    milestone: "远期能力，不应触发过期"
+    deferrals: []
+front_matter:
+  - { dir: aiDoc/decisions, kind: adr }
