@@ -1,3 +1,4 @@
 /tools/.bin/
 dist/
 *.exe
+tools/.bin/

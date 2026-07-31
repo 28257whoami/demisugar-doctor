@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+#
+# agent-doctor bootstrap —— 唯一允许联网的环节。
+#
+# 职责严格限定为：选平台 → 下载 → 校验 SHA256 → 落到 tools/.bin/。
+# 它不做检查、不改仓库文件。`agent-doctor check` 绝不下载任何东西，
+# 缺二进制时直接失败——这样「离线」是结构保证，不是承诺。
+#
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+VERSION_FILE=".agent-doctor-version"
+BIN_DIR="tools/.bin"
+
+[ -f "$VERSION_FILE" ] || { echo "缺少 $VERSION_FILE" >&2; exit 1; }
+
+version=$(grep -E '^version:' "$VERSION_FILE" | awk '{print $2}')
+
+case "$(uname -s)" in
+  Linux)  os=linux  ;;
+  Darwin) os=darwin ;;
+  *) echo "不支持的系统: $(uname -s)" >&2; exit 1 ;;
+esac
+case "$(uname -m)" in
+  x86_64|amd64) arch=amd64 ;;
+  aarch64|arm64) arch=arm64 ;;
+  *) echo "不支持的架构: $(uname -m)" >&2; exit 1 ;;
+esac
+
+platform="${os}-${arch}"
+target="$BIN_DIR/agent-doctor-$version"
+
+want=$(grep -E "^\s+${platform}:" "$VERSION_FILE" | sed 's/.*sha256://' | tr -d ' ')
+[ -n "$want" ] || { echo "$VERSION_FILE 中没有 $platform 的校验和" >&2; exit 1; }
+
+verify() { echo "${want}  $1" | sha256sum -c --status 2>/dev/null; }
+
+if [ -f "$target" ] && verify "$target"; then
+  echo "agent-doctor $version ($platform) 已就位"
+  exit 0
+fi
+
+mkdir -p "$BIN_DIR"
+url="https://github.com/28257whoami/demisugar-doctor/releases/download/${version}/agent-doctor-${platform}"
+echo "下载 agent-doctor $version ($platform)..."
+curl -fsSL "$url" -o "$target.tmp"
+
+if ! verify "$target.tmp"; then
+  rm -f "$target.tmp"
+  echo "SHA256 校验失败，已丢弃下载内容" >&2
+  exit 1
+fi
+
+chmod +x "$target.tmp"
+mv "$target.tmp" "$target"
+echo "agent-doctor $version ($platform) 安装完成"

@@ -1,0 +1,13 @@
+# agent-doctor 版本 pin。
+#
+# 升级是显式动作：改这里 + 更新校验和，一个仓一次 PR。
+# 这意味着「给 doctor 加一条检查」= 各消费仓一次 PR，
+# 这是「升级必须可审计」的必然成本。
+#
+# 源码与 Release：github.com/28257whoami/demisugar-doctor（公开仓）
+version: v0.1.0
+binaries:
+  linux-amd64: sha256:c4ad9efb8c3daa7c58be795c59dfc3caaad4142bf35ef239390ad6f8f2d48eee
+  linux-arm64: sha256:e6ac69687ec21eae0d3844812c26ac5624c3d82d8b5623ec2b8c168dbb7d0783
+  darwin-amd64: sha256:389ee5dfdd02c1912a54af97c896259307c475f7886149469538476c5fc37521
+  darwin-arm64: sha256:1017d4441d63de16b358c65b64e4aa05486e85910a9500229578efddb82f60e1

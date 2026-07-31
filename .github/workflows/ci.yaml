@@ -14,3 +14,17 @@ jobs:
       # 稳定入口：命令细节封在脚本里，
       # 避免 workflow 与能力清单各写一份产生漂移
       - run: ./tools/ci-quality
+
+  # dogfooding：doctor 用【已发布的自己】检查自己。
+  # 不用 go run 当前源码——那样验证的是未发布的版本，
+  # 和消费方实际拿到的二进制可能不一致。
+  agent-doctor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: tools/.bin
+          key: agent-doctor-${{ hashFiles('.agent-doctor-version') }}
+      - run: ./tools/agent-doctor-bootstrap
+      - run: ./tools/agent-doctor check

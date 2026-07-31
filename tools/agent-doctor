@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#
+# agent-doctor 薄入口。
+#
+# 只 exec 已就位的二进制。二进制缺失时【直接失败，绝不下载】——
+# 下载是 tools/agent-doctor-bootstrap 的职责。
+#
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+version=$(grep -E '^version:' .agent-doctor-version | awk '{print $2}')
+bin="tools/.bin/agent-doctor-$version"
+
+if [ ! -x "$bin" ]; then
+  echo "agent-doctor $version 未就位。先运行: ./tools/agent-doctor-bootstrap" >&2
+  exit 1
+fi
+
+exec "$bin" "$@"
