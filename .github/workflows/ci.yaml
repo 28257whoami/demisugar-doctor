@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with: { go-version: '1.25' }
       # 稳定入口：命令细节封在脚本里，
       # 避免 workflow 与能力清单各写一份产生漂移
